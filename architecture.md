@@ -142,7 +142,7 @@ later line fails; retry; wrap the calls in a circuit breaker. These are the resi
 | **AuthN** | JWT bearer. `auth-service` issues HS256 tokens (`iss`, `roles`). Gateway is an OAuth2 resource server with a multi-issuer resolver: local always, Entra when configured. | working; RS256 + JWKS is a planned upgrade |
 | **AuthZ** | Gateway enforces "authenticated" on everything except `/api/auth/**` and `/actuator/**`. | per-user ownership checks (e.g. only your own orders) are a planned follow-up |
 | **Config** | `config-server` (native backend) + per-service `application.yml` + env vars (highest precedence). | working |
-| **Persistence** | JPA; H2 (dev) / PostgreSQL + Flyway migrations (`prod`). | H2 done; Postgres/prod in progress |
+| **Persistence** | JPA. Dev: in-memory H2 + `ddl-auto: update`. `prod`: PostgreSQL, Flyway migrations own the schema, Hibernate `validate` only. One database per service. | working (local overlay) |
 | **Resilience** | 2s connect / 3s read timeouts on `order-service` clients; notification call is fire-and-forget. | timeouts only; retries + circuit breakers deferred |
 | **Observability** | SLF4J + Spring Boot console logging; Actuator health/info. | structured JSON logs + correlation id + metrics/tracing deferred |
 | **API docs** | springdoc OpenAPI per service (`/swagger-ui.html`, `/v3/api-docs`). | working |
@@ -162,8 +162,8 @@ later line fails; retry; wrap the calls in a circuit breaker. These are the resi
 
 1. Push to GitHub + CI (GitHub Actions per repo; e2e stage; re-enable OWASP/Sonar/Snyk with
    Environment secrets; `gitleaks`).
-2. PostgreSQL + `prod` profile + Flyway (in progress).
-3. Cloud hosting.
+2. ~~PostgreSQL + `prod` profile + Flyway~~ — done for local (`docker-compose.postgres.yml`).
+3. Cloud hosting (managed PostgreSQL, container registry, secrets store, public HTTPS).
 4. Per-user authorization; RS256 + JWKS; forward `X-User-Id` downstream.
 5. Resilience4j (retry, circuit breaker) + saga-style compensation.
 6. Structured logging + correlation id + Prometheus/Grafana + distributed tracing.
