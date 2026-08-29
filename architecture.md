@@ -146,7 +146,8 @@ later line fails; retry; wrap the calls in a circuit breaker. These are the resi
 | **Resilience** | 2s connect / 3s read timeouts on `order-service` clients; notification call is fire-and-forget. | timeouts only; retries + circuit breakers deferred |
 | **Observability** | SLF4J + Spring Boot console logging; Actuator health/info. | structured JSON logs + correlation id + metrics/tracing deferred |
 | **API docs** | springdoc OpenAPI per service (`/swagger-ui.html`, `/v3/api-docs`). | working |
-| **Quality** | Spotless (google-java-format) + Checkstyle (cyclomatic complexity <= 10) + JaCoCo, vendored per repo. OWASP / SonarCloud / Snyk run in CI. | build gates working; CI in progress |
+| **Quality** | Spotless (google-java-format) + Checkstyle (cyclomatic complexity <= 10) + JaCoCo, vendored per repo. | build gates working |
+| **CI/CD** | GitHub Actions per repo: `ci.yml` (build + test + lint on every push/PR, image to GHCR on `main`/`develop`) + gitleaks; weekly `security-scan.yml` (OWASP Dependency-Check). A nightly `e2e.yml` stands the stack up from GHCR images and runs the REST Assured suite. | written; runs on first push |
 | **Testing** | Unit, `@WebMvcTest` slices, `@DataJpaTest` slices, Testcontainers integration (order-service), REST Assured e2e through the gateway. | working |
 
 ## 5. Runtime & deployment
@@ -160,8 +161,8 @@ later line fails; retry; wrap the calls in a circuit breaker. These are the resi
 
 ## 6. Deferred — the roadmap
 
-1. Push to GitHub + CI (GitHub Actions per repo; e2e stage; re-enable OWASP/Sonar/Snyk with
-   Environment secrets; `gitleaks`).
+1. Push to GitHub, then verify CI runs green (workflows are written: per-repo `ci.yml`, weekly
+   `security-scan.yml`, nightly `e2e.yml`). Add SonarCloud + Snyk once accounts/secrets exist.
 2. ~~PostgreSQL + `prod` profile + Flyway~~ — done for local (`docker-compose.postgres.yml`).
 3. Cloud hosting (managed PostgreSQL, container registry, secrets store, public HTTPS).
 4. Per-user authorization; RS256 + JWKS; forward `X-User-Id` downstream.
