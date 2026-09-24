@@ -11,3 +11,4 @@ marked as such.
 | [0003](0003-synchronous-orchestration.md) | order-service orchestrates synchronously with independent transactions | Accepted |
 | [0004](0004-config-server-not-load-bearing.md) | config-server is demonstrable but not load-bearing | Accepted |
 | [0005](0005-flyway-owns-the-schema.md) | Flyway owns the `prod` schema; Hibernate only validates | Accepted |
+| [0006](0006-gateway-asserted-identity.md) | Gateway asserts caller identity (`X-User-Id`); services scope data to it; default-deny edge | Accepted |
