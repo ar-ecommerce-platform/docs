@@ -140,7 +140,7 @@ later line fails; retry; wrap the calls in a circuit breaker. These are the resi
 | Concern | How | Status |
 |---|---|---|
 | **AuthN** | JWT bearer. `auth-service` issues HS256 tokens (`iss`, `roles`). Gateway is an OAuth2 resource server with a multi-issuer resolver: local always, Entra when configured. | working; RS256 + JWKS is a planned upgrade |
-| **AuthZ** | Gateway enforces "authenticated" on everything except `/api/auth/**` and `/actuator/**`. | per-user ownership checks (e.g. only your own orders) are a planned follow-up |
+| **AuthZ** | Gateway allow-lists the public API (default deny) and forwards the verified caller as `X-User-Id`; services scope data to it ([ADR 0006](decisions/0006-gateway-asserted-identity.md)). | roles / admin surface not yet needed |
 | **Config** | `config-server` (native backend) + per-service `application.yml` + env vars (highest precedence). | working |
 | **Persistence** | JPA. Dev: in-memory H2 + `ddl-auto: update`. `prod`: PostgreSQL, Flyway migrations own the schema, Hibernate `validate` only. One database per service. | working (local overlay) |
 | **Resilience** | 2s connect / 3s read timeouts on `order-service` clients; notification call is fire-and-forget. | timeouts only; retries + circuit breakers deferred |
@@ -165,7 +165,7 @@ later line fails; retry; wrap the calls in a circuit breaker. These are the resi
    `security-scan.yml`, nightly `e2e.yml`). Add SonarCloud + Snyk once accounts/secrets exist.
 2. ~~PostgreSQL + `prod` profile + Flyway~~ — done for local (`docker-compose.postgres.yml`).
 3. Cloud hosting (managed PostgreSQL, container registry, secrets store, public HTTPS).
-4. Per-user authorization; RS256 + JWKS; forward `X-User-Id` downstream.
+4. ~~Per-user authorization; forward `X-User-Id` downstream~~ (done, ADR 0006); RS256 + JWKS.
 5. Resilience4j (retry, circuit breaker) + saga-style compensation.
 6. Structured logging + correlation id + Prometheus/Grafana + distributed tracing.
 7. Event-driven notifications (RabbitMQ / Kafka) replacing the synchronous call.
