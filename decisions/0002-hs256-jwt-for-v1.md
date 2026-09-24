@@ -14,7 +14,7 @@
 
 ## Decision
 
-Ship v1 with **HS256** and a shared `JWT_SECRET` (injected from the environment, dev fallback in
+Ship v1 with **HS256** and a shared `JWT_SECRET` (injected from the environment; required - no fallback in
 config). Pin the algorithm explicitly to HS256 so it doesn't vary with secret length. The
 gateway's multi-issuer resolver already treats the local issuer and Entra as separate trust
 anchors, so moving the local path to RS256 later is contained.
